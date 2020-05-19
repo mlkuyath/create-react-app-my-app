@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { FixedSizeList as List } from "react-window";
+import { FixedSizeGrid as Grid } from "react-window";
 import './styles.css'
 
 class App extends React.Component {
@@ -21,7 +21,7 @@ class App extends React.Component {
           const specialties = result.data.specialties
           this.setState({
             isLoaded: true,
-            items: specialties
+            items: specialties,
           });
         },
         (error) => {
@@ -40,23 +40,26 @@ class App extends React.Component {
     } else if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
-        let arr = items.map(item=>item.name);
-        const Row = ({ index, style }) => (
-          <div className={index % 2 ? 'ListItemOdd' : 'ListItemEven'} style={style}>
-             {arr[index]}
+        let arr = items.map(item=>item);
+        const Cell = ({columnIndex, rowIndex, style }) => (
+          <div className = {((rowIndex+columnIndex) % 2) ? 'ListItemOdd' : 'ListItemEven'} style={style}>
+             {columnIndex == 0 ? arr[rowIndex].name : arr[rowIndex]._id}
           </div>
         );
         const Example = () => (
-          <List
-            className="List"
-            height={35*items.length}
-            itemCount={items.length}
-            itemSize={35}
-            width={300}
+          <Grid
+            className="Grid"
+            columnCount={2}
+            columnWidth={200}
+            height={items.length*35}
+            rowCount={items.length}
+            rowHeight={35}
+            width={400}
           >
-            {Row}
-          </List>
+            {Cell}
+          </Grid>
         );
+    
       return (
             <Example/>
       );
