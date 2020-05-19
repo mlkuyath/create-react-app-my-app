@@ -1,14 +1,7 @@
 import React from 'react';
 import './App.css';
-
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
+import { FixedSizeList as List } from "react-window";
+import './styles.css'
 
 class App extends React.Component {
   constructor(props) {
@@ -47,16 +40,25 @@ class App extends React.Component {
     } else if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
-        shuffleArray(items);
-        shuffleArray(items);
+        let arr = items.map(item=>item.name);
+        const Row = ({ index, style }) => (
+          <div className={index % 2 ? 'ListItemOdd' : 'ListItemEven'} style={style}>
+             {arr[index]}
+          </div>
+        );
+        const Example = () => (
+          <List
+            className="List"
+            height={35*items.length}
+            itemCount={items.length}
+            itemSize={35}
+            width={300}
+          >
+            {Row}
+          </List>
+        );
       return (
-        <ul>
-          {items.map(item => 
-            <li key={item.name}>
-                {item.name}
-            </li>
-          )}
-        </ul>
+            <Example/>
       );
     }
   }
