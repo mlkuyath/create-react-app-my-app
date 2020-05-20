@@ -1,14 +1,7 @@
 import React from 'react';
 import './App.css';
-
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
+import { FixedSizeGrid as Grid } from "react-window";
+import './styles.css'
 
 class App extends React.Component {
   constructor(props) {
@@ -20,26 +13,22 @@ class App extends React.Component {
     };
   }
 
-  componentDidMount() {
-    fetch('https://api.vidscrip.com/api/v1/specialties')
-      .then(res => res.json())
-      .then(
-        (result) => {
-          const specialties = result.data.specialties
+  async componentDidMount() {
+    try {
+      var res = await fetch('https://api.vidscrip.com/api/v1/specialties');
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    const json = await res.json(); 
           this.setState({
             isLoaded: true,
-            items: specialties
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
+            items: json.data.specialties
+          }); 
   }
-
+  
   render() {
     const { error, isLoaded, items } = this.state;
     if (error) {
@@ -47,21 +36,31 @@ class App extends React.Component {
     } else if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
-        shuffleArray(items);
-        shuffleArray(items);
+        let arr = items.map(item=>item);
+        const Cell = ({columnIndex, rowIndex, style }) => (
+          <div className = {((rowIndex+columnIndex) % 2) ? 'ListItemOdd' : 'ListItemEven'} style={style}>
+             {columnIndex === 0 ? arr[rowIndex].name : arr[rowIndex]._id}
+          </div>
+        );
+        const Example = () => (
+          <Grid
+            className="Grid"
+            columnCount={2}
+            columnWidth={200}
+            height={items.length*35}
+            rowCount={items.length}
+            rowHeight={35}
+            width={400}
+          >
+            {Cell}
+          </Grid>
+        );
+    
       return (
-        <ul>
-          {items.map(item => 
-            <li key={item.name}>
-                {item.name}
-            </li>
-          )}
-        </ul>
+            <Example/>
       );
     }
   }
 }
 
 export default App;
-
-
