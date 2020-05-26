@@ -14,20 +14,26 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
+   var res = "";
+
     try {
-      var res = await fetch('https://api.vidscrip.com/api/v1/specialties');
-      if (!res.ok) {
+    res = await fetch('http://localhost:3000/');
+     if (!res.ok) {
         throw Error(res.statusText);
-      }
+     }
     } catch (error) {
       console.log(error);
     }
-    const json = await res.json(); 
-          this.setState({
-            isLoaded: true,
-            items: json.data.specialties
-          }); 
-  }
+    
+    const json = await res.json();
+    console.log(json);
+
+    this.setState({
+      isLoaded: true,
+      items: json
+    });
+
+}
   
   render() {
     const { error, isLoaded, items } = this.state;
@@ -39,7 +45,7 @@ class App extends React.Component {
         let arr = items.map(item=>item);
         const Cell = ({columnIndex, rowIndex, style }) => (
           <div className = {((rowIndex+columnIndex) % 2) ? 'ListItemOdd' : 'ListItemEven'} style={style}>
-             {columnIndex === 0 ? arr[rowIndex].name : arr[rowIndex]._id}
+             {columnIndex === 1 ? arr[rowIndex].name : arr[rowIndex].rank}
           </div>
         );
         const Example = () => (
