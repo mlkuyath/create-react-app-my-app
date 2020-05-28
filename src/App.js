@@ -3,6 +3,8 @@ import './App.css';
 import { FixedSizeGrid as Grid } from "react-window";
 import './styles.css'
 
+
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -17,20 +19,22 @@ class App extends React.Component {
    var res = "";
 
     try {
-    res = await fetch('http://localhost:3000/');
+    res = await fetch('https://nameless-caverns-23945.herokuapp.com/api/v1/stats/2');
      if (!res.ok) {
         throw Error(res.statusText);
      }
     } catch (error) {
       console.log(error);
     }
-    
+  
     const json = await res.json();
-    console.log(json);
+
+    const arr = Object.entries(json);
+    console.log(arr);
 
     this.setState({
       isLoaded: true,
-      items: json
+      items: arr
     });
 
 }
@@ -45,7 +49,7 @@ class App extends React.Component {
         let arr = items.map(item=>item);
         const Cell = ({columnIndex, rowIndex, style }) => (
           <div className = {((rowIndex+columnIndex) % 2) ? 'ListItemOdd' : 'ListItemEven'} style={style}>
-             {columnIndex === 1 ? arr[rowIndex].name : arr[rowIndex].rank}
+             {columnIndex === 1 ? arr[rowIndex][1] : arr[rowIndex][0]}
           </div>
         );
         const Example = () => (
